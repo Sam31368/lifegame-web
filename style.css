@@ -60,6 +60,13 @@ button:active {
   align-items: center;
   gap: 6px;
   font-size: 0.9rem;
+  width: min(420px, 100%);
+  justify-content: center;
+}
+
+#speedSlider {
+  flex: 1;
+  min-width: 0;
 }
 
 #genCounter {
@@ -104,18 +111,7 @@ button:active {
     padding: 8px 10px;
   }
 
-  .speed-label {
-    flex: 1 1 100%;
-    justify-content: center;
-  }
-
-  #speedSlider {
-    flex: 1;
-    min-width: 0;
-  }
-
   #genCounter {
-    flex: 1 1 100%;
     min-width: 0;
     text-align: center;
   }

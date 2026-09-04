@@ -15,17 +15,18 @@
     <button id="stepBtn">Step</button>
     <button id="randomBtn">Random</button>
     <button id="clearBtn">Clear</button>
-    <label class="speed-label">
-      速度
-      <input type="range" id="speedSlider" min="1" max="60" value="10">
-      <span id="speedValue">10</span> fps
-    </label>
     <span id="genCounter">Generation: 0</span>
   </div>
 
   <div class="canvas-wrap">
     <canvas id="board" width="320" height="320"></canvas>
   </div>
+
+  <label class="speed-label">
+    速度
+    <input type="range" id="speedSlider" min="1" max="60" value="10">
+    <span id="speedValue">10</span> fps
+  </label>
 
   <script src="script.js"></script>
 </body>
