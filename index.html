@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Life Game 128x128</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <h1>Conway's Life Game (128&times;128)</h1>
+
+  <div class="controls">
+    <button id="startBtn">Start</button>
+    <button id="stopBtn">Stop</button>
+    <button id="stepBtn">Step</button>
+    <button id="randomBtn">Random</button>
+    <button id="clearBtn">Clear</button>
+    <label class="speed-label">
+      速度
+      <input type="range" id="speedSlider" min="1" max="60" value="10">
+      <span id="speedValue">10</span> fps
+    </label>
+    <span id="genCounter">Generation: 0</span>
+  </div>
+
+  <div class="canvas-wrap">
+    <canvas id="board" width="512" height="512"></canvas>
+  </div>
+
+  <p class="hint">セルをクリックすると生死を反転できます。盤面の端は反対側とつながっています（トーラス状）。</p>
+
+  <script src="script.js"></script>
+</body>
+</html>
