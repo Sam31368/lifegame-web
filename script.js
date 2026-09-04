@@ -1,5 +1,5 @@
 (function () {
-  const SIZE = 128;
+  const SIZE = 64;
   const CANVAS_PX = 512;
   const CELL_PX = CANVAS_PX / SIZE;
 
