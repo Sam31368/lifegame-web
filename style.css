@@ -28,6 +28,13 @@ h1 {
   width: min(720px, 100%);
 }
 
+.action-controls {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  width: min(420px, 100%);
+}
+
 button {
   background: #2563eb;
   color: white;
@@ -103,6 +110,10 @@ button:active {
   }
 
   .controls {
+    gap: 8px;
+  }
+
+  .action-controls {
     gap: 8px;
   }
 
