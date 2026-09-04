@@ -4,7 +4,7 @@
 
 body {
   margin: 0;
-  padding: 24px;
+  padding: 24px 16px;
   background: #111827;
   color: #e5e7eb;
   font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
@@ -25,6 +25,7 @@ h1 {
   align-items: center;
   gap: 10px;
   justify-content: center;
+  width: min(720px, 100%);
 }
 
 button {
@@ -78,10 +79,46 @@ button:active {
   background: #000000;
   cursor: pointer;
   image-rendering: pixelated;
-  width: 512px;
-  height: 512px;
+  width: min(512px, 100%);
+  height: auto;
   max-width: 100%;
   touch-action: none;
+}
+
+@media (max-width: 480px) {
+  body {
+    padding: 16px 10px;
+    gap: 12px;
+  }
+
+  h1 {
+    font-size: 1.2rem;
+  }
+
+  .controls {
+    gap: 8px;
+  }
+
+  button {
+    flex: 1 1 calc(33.333% - 8px);
+    padding: 8px 10px;
+  }
+
+  .speed-label {
+    flex: 1 1 100%;
+    justify-content: center;
+  }
+
+  #speedSlider {
+    flex: 1;
+    min-width: 0;
+  }
+
+  #genCounter {
+    flex: 1 1 100%;
+    min-width: 0;
+    text-align: center;
+  }
 }
 
 .hint {

@@ -1,6 +1,6 @@
 (function () {
   const SIZE = 64;
-  const CANVAS_PX = 512;
+  const CANVAS_PX = 360;
   const CELL_PX = CANVAS_PX / SIZE;
 
   const board = document.getElementById('board');
