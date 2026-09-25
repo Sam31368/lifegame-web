@@ -25,6 +25,7 @@
   const stopBtn = document.getElementById('stopBtn');
   const stepBtn = document.getElementById('stepBtn');
   const randomBtn = document.getElementById('randomBtn');
+  const gliderBtn = document.getElementById('gliderBtn');
   const clearBtn = document.getElementById('clearBtn');
   const speedSlider = document.getElementById('speedSlider');
   const speedValue = document.getElementById('speedValue');
@@ -66,10 +67,10 @@
     for (let i = 0; i < grid.length; i++) {
       const alive = grid[i];
       const o = i * 4;
-      const v = alive ? 230 : 17;
+      const v = alive ? 255 : 0;
       data[o] = v;
-      data[o + 1] = alive ? 230 : 17;
-      data[o + 2] = alive ? 230 : 24;
+      data[o + 1] = v;
+      data[o + 2] = v;
       data[o + 3] = 255;
     }
     offCtx.putImageData(imageData, 0, 0);
@@ -81,10 +82,57 @@
     genCounter.textContent = `Generation: ${generation}`;
   }
 
+  function setCell(x, y, value) {
+    if (x < 0 || x >= SIZE || y < 0 || y >= SIZE) return;
+    grid[idx(x, y)] = value ? 1 : 0;
+  }
+
+  function addGlider(x, y, rotation = 0) {
+    const cells = [
+      [0, 1, 0],
+      [0, 0, 1],
+      [1, 1, 1],
+    ];
+
+    for (let row = 0; row < cells.length; row++) {
+      for (let col = 0; col < cells[row].length; col++) {
+        if (!cells[row][col]) continue;
+
+        let px = col;
+        let py = row;
+
+        for (let r = 0; r < rotation; r += 90) {
+          const nx = py;
+          const ny = 2 - px;
+          px = nx;
+          py = ny;
+        }
+
+        setCell(x + px, y + py, 1);
+      }
+    }
+  }
+
   function randomize() {
     for (let i = 0; i < grid.length; i++) {
-      grid[i] = Math.random() < 0.3 ? 1 : 0;
+      grid[i] = Math.random() < 1 / 3 ? 1 : 0;
     }
+
+    generation = 0;
+    updateGenCounter();
+    render();
+  }
+
+  function addGliders() {
+    grid.fill(0);
+
+    for (let i = 0; i < 5; i++) {
+      const x = 2 + Math.floor(Math.random() * (SIZE - 8));
+      const y = 2 + Math.floor(Math.random() * (SIZE - 8));
+      const rotation = Math.floor(Math.random() * 4) * 90;
+      addGlider(x, y, rotation);
+    }
+
     generation = 0;
     updateGenCounter();
     render();
@@ -139,6 +187,10 @@
   randomBtn.addEventListener('click', () => {
     stop();
     randomize();
+  });
+  gliderBtn.addEventListener('click', () => {
+    stop();
+    addGliders();
   });
   clearBtn.addEventListener('click', () => {
     stop();
