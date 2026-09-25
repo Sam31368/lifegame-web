@@ -7,17 +7,20 @@
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <h1>Conway's Life Game</h1>
+  <h1>Conway's Game of Life</h1>
 
   <div class="controls">
-    <label class="init-select-wrap" aria-label="Initialize pattern">
-      <span class="init-label">Init</span>
-      <select id="initSelect">
-        <option value="random">Random</option>
-        <option value="glider">Gliders</option>
-        <option value="galaxy">Galaxies</option>
-      </select>
-    </label>
+    <div class="init-group">
+      <label class="init-select-wrap" aria-label="Initialize pattern">
+        <select id="initSelect">
+          <option value="random">Random</option>
+          <option value="glider">Gliders</option>
+          <option value="galaxy">Galaxies</option>
+          <option value="queenBeeShuttle">Queen bee shuttle</option>
+        </select>
+      </label>
+      <button id="initBtn">Init</button>
+    </div>
     <button id="clearBtn">Clear</button>
   </div>
 

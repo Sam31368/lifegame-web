@@ -1,9 +1,8 @@
 (function () {
   const SIZE = 64;
-  const CANVAS_PX = 360;
-  const CELL_PX = CANVAS_PX / SIZE;
 
   const board = document.getElementById('board');
+  const CANVAS_PX = board.width;
   const ctx = board.getContext('2d');
   ctx.imageSmoothingEnabled = false;
 
@@ -25,6 +24,7 @@
   const stopBtn = document.getElementById('stopBtn');
   const stepBtn = document.getElementById('stepBtn');
   const initSelect = document.getElementById('initSelect');
+  const initBtn = document.getElementById('initBtn');
   const clearBtn = document.getElementById('clearBtn');
   const speedSlider = document.getElementById('speedSlider');
   const speedValue = document.getElementById('speedValue');
@@ -189,11 +189,54 @@
     render();
   }
 
+  function addQueenBeeShuttle() {
+    grid.fill(0);
+
+    const patternOriginal = [
+      [0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0],
+      [0,0,0,0,0,0,0,0,0,0,0,0,1,0,1,0,0,0,0,0,0,0],
+      [1,1,0,0,0,0,0,0,0,0,0,0,0,1,0,1,0,0,0,0,1,1],
+      [1,1,0,0,0,0,0,0,0,0,0,0,0,1,0,0,1,0,0,0,1,1],
+      [0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,1,0,0,0,0,0,0],
+      [0,0,0,0,0,0,0,0,0,0,0,0,1,0,1,0,0,0,0,0,0,0],
+      [0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0]
+    ];
+
+    const patternWidth = patternOriginal[0].length;
+    const patternHeight = patternOriginal.length;
+    const centerX = Math.round(SIZE / 2 - patternWidth / 2);
+    const topY = Math.round(SIZE / 3 - patternHeight / 2);
+    const bottomY = Math.round((SIZE * 2) / 3 - patternHeight / 2);
+
+    const placePattern = (x, y, pattern, flip) => {
+      const rows = pattern.map((row) => flip ? row.slice().reverse() : row.slice());
+      for (let py = 0; py < rows.length; py++) {
+        for (let px = 0; px < rows[py].length; px++) {
+          if (rows[py][px]) {
+            setCell(x + px, y + py, 1);
+          }
+        }
+      }
+    };
+
+    placePattern(centerX, topY, patternOriginal, false);
+    placePattern(centerX, bottomY, patternOriginal, true);
+
+    generation = 0;
+    updateGenCounter();
+    render();
+  }
+
   function clearGrid() {
     grid.fill(0);
     generation = 0;
     updateGenCounter();
     render();
+  }
+
+  function updateControls() {
+    startBtn.disabled = running;
+    stopBtn.disabled = !running;
   }
 
   function scheduleNext() {
@@ -206,6 +249,7 @@
   function start() {
     if (running) return;
     running = true;
+    updateControls();
     scheduleNext();
   }
 
@@ -215,6 +259,7 @@
       clearTimeout(timerId);
       timerId = null;
     }
+    updateControls();
   }
 
   function toggleCellAtEvent(evt) {
@@ -235,7 +280,7 @@
     stop();
     step();
   });
-  initSelect.addEventListener('change', () => {
+  function applySelectedInit() {
     stop();
 
     switch (initSelect.value) {
@@ -248,10 +293,20 @@
       case 'galaxy':
         addGalaxies();
         break;
+      case 'queenBeeShuttle':
+        addQueenBeeShuttle();
+        break;
       default:
         break;
     }
+  }
+
+  initSelect.addEventListener('change', () => {
+    if (running) {
+      stop();
+    }
   });
+  initBtn.addEventListener('click', applySelectedInit);
   clearBtn.addEventListener('click', () => {
     stop();
     clearGrid();
