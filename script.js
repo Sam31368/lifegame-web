@@ -26,6 +26,7 @@
   const stepBtn = document.getElementById('stepBtn');
   const randomBtn = document.getElementById('randomBtn');
   const gliderBtn = document.getElementById('gliderBtn');
+  const galaxyBtn = document.getElementById('galaxyBtn');
   const clearBtn = document.getElementById('clearBtn');
   const speedSlider = document.getElementById('speedSlider');
   const speedValue = document.getElementById('speedValue');
@@ -138,6 +139,53 @@
     render();
   }
 
+  function addGalaxies() {
+    grid.fill(0);
+
+    const pattern = [
+      [1,1,1,1,1,1,0,1,1],
+      [1,1,1,1,1,1,0,1,1],
+      [0,0,0,0,0,0,0,1,1],
+      [1,1,0,0,0,0,0,1,1],
+      [1,1,0,0,0,0,0,1,1],
+      [1,1,0,0,0,0,0,1,1],
+      [1,1,0,0,0,0,0,0,0],
+      [1,1,0,1,1,1,1,1,1],
+      [1,1,0,1,1,1,1,1,1]
+    ];
+
+    const positions = [];
+    const patternWidth = pattern[0].length;
+    const patternHeight = pattern.length;
+
+    while (positions.length < 3) {
+      const x = Math.floor(Math.random() * (SIZE - patternWidth + 1));
+      const y = Math.floor(Math.random() * (SIZE - patternHeight + 1));
+      const overlaps = positions.some((position) => (
+        x < position.x + patternWidth &&
+        x + patternWidth > position.x &&
+        y < position.y + patternHeight &&
+        y + patternHeight > position.y
+      ));
+
+      if (!overlaps) positions.push({ x, y });
+    }
+
+    for (const position of positions) {
+      for (let y = 0; y < patternHeight; y++) {
+        for (let x = 0; x < patternWidth; x++) {
+          if (pattern[y][x]) {
+            setCell(position.x + x, position.y + y, 1);
+          }
+        }
+      }
+    }
+
+    generation = 0;
+    updateGenCounter();
+    render();
+  }
+
   function clearGrid() {
     grid.fill(0);
     generation = 0;
@@ -191,6 +239,10 @@
   gliderBtn.addEventListener('click', () => {
     stop();
     addGliders();
+  });
+  galaxyBtn.addEventListener('click', () => {
+    stop();
+    addGalaxies();
   });
   clearBtn.addEventListener('click', () => {
     stop();
