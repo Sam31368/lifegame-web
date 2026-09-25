@@ -34,16 +34,31 @@
     return y * SIZE + x;
   }
 
+  function resetGeneration() {
+    generation = 0;
+    updateGenCounter();
+  }
+
+  function clearGrid() {
+    grid.fill(0);
+    nextGrid.fill(0);
+    resetGeneration();
+    render();
+  }
+
   function countNeighbors(x, y) {
     let count = 0;
+
     for (let dy = -1; dy <= 1; dy++) {
       for (let dx = -1; dx <= 1; dx++) {
         if (dx === 0 && dy === 0) continue;
+
         const nx = (x + dx + SIZE) % SIZE;
         const ny = (y + dy + SIZE) % SIZE;
         count += grid[idx(nx, ny)];
       }
     }
+
     return count;
   }
 
@@ -51,27 +66,32 @@
     for (let y = 0; y < SIZE; y++) {
       for (let x = 0; x < SIZE; x++) {
         const alive = grid[idx(x, y)];
-        const n = countNeighbors(x, y);
-        nextGrid[idx(x, y)] = alive ? (n === 2 || n === 3 ? 1 : 0) : (n === 3 ? 1 : 0);
+        const neighbors = countNeighbors(x, y);
+        const nextAlive = alive ? (neighbors === 2 || neighbors === 3) : (neighbors === 3);
+        nextGrid[idx(x, y)] = nextAlive ? 1 : 0;
       }
     }
+
     [grid, nextGrid] = [nextGrid, grid];
-    generation++;
+    generation += 1;
     updateGenCounter();
     render();
   }
 
   function render() {
     const data = imageData.data;
+
     for (let i = 0; i < grid.length; i++) {
       const alive = grid[i];
-      const o = i * 4;
-      const v = alive ? 255 : 0;
-      data[o] = v;
-      data[o + 1] = v;
-      data[o + 2] = v;
-      data[o + 3] = 255;
+      const offset = i * 4;
+      const value = alive ? 255 : 0;
+
+      data[offset] = value;
+      data[offset + 1] = value;
+      data[offset + 2] = value;
+      data[offset + 3] = 255;
     }
+
     offCtx.putImageData(imageData, 0, 0);
     ctx.clearRect(0, 0, CANVAS_PX, CANVAS_PX);
     ctx.drawImage(off, 0, 0, CANVAS_PX, CANVAS_PX);
@@ -84,6 +104,17 @@
   function setCell(x, y, value) {
     if (x < 0 || x >= SIZE || y < 0 || y >= SIZE) return;
     grid[idx(x, y)] = value ? 1 : 0;
+  }
+
+  function placePattern(pattern, x, y, flip = false) {
+    const rows = pattern.map((row) => (flip ? row.slice().reverse() : row.slice()));
+
+    for (let rowIndex = 0; rowIndex < rows.length; rowIndex++) {
+      for (let colIndex = 0; colIndex < rows[rowIndex].length; colIndex++) {
+        if (!rows[rowIndex][colIndex]) continue;
+        setCell(x + colIndex, y + rowIndex, 1);
+      }
+    }
   }
 
   function addGlider(x, y, rotation = 0) {
@@ -101,10 +132,10 @@
         let py = row;
 
         for (let r = 0; r < rotation; r += 90) {
-          const nx = py;
-          const ny = 2 - px;
-          px = nx;
-          py = ny;
+          const nextX = py;
+          const nextY = 2 - px;
+          px = nextX;
+          py = nextY;
         }
 
         setCell(x + px, y + py, 1);
@@ -117,13 +148,14 @@
       grid[i] = Math.random() < 1 / 3 ? 1 : 0;
     }
 
-    generation = 0;
-    updateGenCounter();
+    nextGrid.fill(0);
+    resetGeneration();
     render();
   }
 
   function addGliders() {
     grid.fill(0);
+    nextGrid.fill(0);
 
     for (let i = 0; i < 5; i++) {
       const x = 2 + Math.floor(Math.random() * (SIZE - 8));
@@ -132,24 +164,24 @@
       addGlider(x, y, rotation);
     }
 
-    generation = 0;
-    updateGenCounter();
+    resetGeneration();
     render();
   }
 
   function addGalaxies() {
     grid.fill(0);
+    nextGrid.fill(0);
 
     const pattern = [
-      [1,1,1,1,1,1,0,1,1],
-      [1,1,1,1,1,1,0,1,1],
-      [0,0,0,0,0,0,0,1,1],
-      [1,1,0,0,0,0,0,1,1],
-      [1,1,0,0,0,0,0,1,1],
-      [1,1,0,0,0,0,0,1,1],
-      [1,1,0,0,0,0,0,0,0],
-      [1,1,0,1,1,1,1,1,1],
-      [1,1,0,1,1,1,1,1,1]
+      [1, 1, 1, 1, 1, 1, 0, 1, 1],
+      [1, 1, 1, 1, 1, 1, 0, 1, 1],
+      [0, 0, 0, 0, 0, 0, 0, 1, 1],
+      [1, 1, 0, 0, 0, 0, 0, 1, 1],
+      [1, 1, 0, 0, 0, 0, 0, 1, 1],
+      [1, 1, 0, 0, 0, 0, 0, 1, 1],
+      [1, 1, 0, 0, 0, 0, 0, 0, 0],
+      [1, 1, 0, 1, 1, 1, 1, 1, 1],
+      [1, 1, 0, 1, 1, 1, 1, 1, 1],
     ];
 
     const positions = [];
@@ -171,35 +203,37 @@
         y + patternHeight > position.y
       ));
 
-      if (!overlaps) positions.push({ x, y });
+      if (!overlaps) {
+        positions.push({ x, y });
+      }
     }
 
     for (const position of positions) {
-      for (let y = 0; y < patternHeight; y++) {
-        for (let x = 0; x < patternWidth; x++) {
-          if (pattern[y][x]) {
-            setCell(position.x + x, position.y + y, 1);
+      for (let row = 0; row < patternHeight; row++) {
+        for (let col = 0; col < patternWidth; col++) {
+          if (pattern[row][col]) {
+            setCell(position.x + col, position.y + row, 1);
           }
         }
       }
     }
 
-    generation = 0;
-    updateGenCounter();
+    resetGeneration();
     render();
   }
 
   function addQueenBeeShuttle() {
     grid.fill(0);
+    nextGrid.fill(0);
 
     const patternOriginal = [
-      [0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0],
-      [0,0,0,0,0,0,0,0,0,0,0,0,1,0,1,0,0,0,0,0,0,0],
-      [1,1,0,0,0,0,0,0,0,0,0,0,0,1,0,1,0,0,0,0,1,1],
-      [1,1,0,0,0,0,0,0,0,0,0,0,0,1,0,0,1,0,0,0,1,1],
-      [0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,1,0,0,0,0,0,0],
-      [0,0,0,0,0,0,0,0,0,0,0,0,1,0,1,0,0,0,0,0,0,0],
-      [0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0]
+      [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0],
+      [1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 1, 1],
+      [1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 1, 1],
+      [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     ];
 
     const patternWidth = patternOriginal[0].length;
@@ -208,30 +242,27 @@
     const topY = Math.round(SIZE / 3 - patternHeight / 2);
     const bottomY = Math.round((SIZE * 2) / 3 - patternHeight / 2);
 
-    const placePattern = (x, y, pattern, flip) => {
-      const rows = pattern.map((row) => flip ? row.slice().reverse() : row.slice());
-      for (let py = 0; py < rows.length; py++) {
-        for (let px = 0; px < rows[py].length; px++) {
-          if (rows[py][px]) {
-            setCell(x + px, y + py, 1);
-          }
-        }
-      }
-    };
+    placePattern(patternOriginal, centerX, topY, false);
+    placePattern(patternOriginal, centerX, bottomY, true);
 
-    placePattern(centerX, topY, patternOriginal, false);
-    placePattern(centerX, bottomY, patternOriginal, true);
-
-    generation = 0;
-    updateGenCounter();
+    resetGeneration();
     render();
   }
 
-  function clearGrid() {
-    grid.fill(0);
-    generation = 0;
-    updateGenCounter();
-    render();
+  function applySelectedInit() {
+    stop();
+
+    const initializers = {
+      random: randomize,
+      glider: addGliders,
+      galaxy: addGalaxies,
+      queenBeeShuttle: addQueenBeeShuttle,
+    };
+
+    const initializer = initializers[initSelect.value];
+    if (initializer) {
+      initializer();
+    }
   }
 
   function updateControls() {
@@ -301,11 +332,6 @@
     }
   }
 
-  initSelect.addEventListener('change', () => {
-    if (running) {
-      stop();
-    }
-  });
   initBtn.addEventListener('click', applySelectedInit);
   clearBtn.addEventListener('click', () => {
     stop();
