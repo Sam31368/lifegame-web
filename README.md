@@ -19,10 +19,10 @@ The app runs without a build step or external dependencies.
 Open `index.html` directly in a browser, or run a local static server from this directory:
 
 ```bash
-python3 -m http.server 8000
+python3 -m http.server 8080
 ```
 
-Then visit <http://localhost:8000>.
+Then visit <http://localhost:8080>.
 
 To stop the server, press `Ctrl+C` in the terminal.
 
