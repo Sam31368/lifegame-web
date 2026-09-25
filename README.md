@@ -28,14 +28,14 @@ To stop the server, press `Ctrl+C` in the terminal.
 
 ### Controls
 
-- **Random**: fills the grid with a random pattern
-- **Gliders**: creates five gliders in random positions
-- **Galaxies**: creates three galaxy patterns in non-overlapping positions centered within the board
+- **Init dropdown**: choose one of the preset patterns: Random, Gliders, or Galaxies
 - **Clear**: resets the board to empty
 - **Start** / **Stop**: begin or pause simulation
 - **Step**: advances one generation
 - **Speed**: changes the update rate from 1 to 60 frames per second
 - **Click cells**: toggles alive/dead state manually
+
+The initialization selector is a compact dropdown menu to keep the top toolbar simple and visually clean while still providing all three preset starting patterns.
 
 ## Deploying to GitHub Pages
 

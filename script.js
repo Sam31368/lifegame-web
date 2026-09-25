@@ -24,9 +24,7 @@
   const startBtn = document.getElementById('startBtn');
   const stopBtn = document.getElementById('stopBtn');
   const stepBtn = document.getElementById('stepBtn');
-  const randomBtn = document.getElementById('randomBtn');
-  const gliderBtn = document.getElementById('gliderBtn');
-  const galaxyBtn = document.getElementById('galaxyBtn');
+  const initSelect = document.getElementById('initSelect');
   const clearBtn = document.getElementById('clearBtn');
   const speedSlider = document.getElementById('speedSlider');
   const speedValue = document.getElementById('speedValue');
@@ -237,17 +235,22 @@
     stop();
     step();
   });
-  randomBtn.addEventListener('click', () => {
+  initSelect.addEventListener('change', () => {
     stop();
-    randomize();
-  });
-  gliderBtn.addEventListener('click', () => {
-    stop();
-    addGliders();
-  });
-  galaxyBtn.addEventListener('click', () => {
-    stop();
-    addGalaxies();
+
+    switch (initSelect.value) {
+      case 'random':
+        randomize();
+        break;
+      case 'glider':
+        addGliders();
+        break;
+      case 'galaxy':
+        addGalaxies();
+        break;
+      default:
+        break;
+    }
   });
   clearBtn.addEventListener('click', () => {
     stop();

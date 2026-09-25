@@ -10,9 +10,14 @@
   <h1>Conway's Life Game</h1>
 
   <div class="controls">
-    <button id="randomBtn">Random</button>
-    <button id="gliderBtn">Gliders</button>
-    <button id="galaxyBtn">Galaxies</button>
+    <label class="init-select-wrap" aria-label="Initialize pattern">
+      <span class="init-label">Init</span>
+      <select id="initSelect">
+        <option value="random">Random</option>
+        <option value="glider">Gliders</option>
+        <option value="galaxy">Galaxies</option>
+      </select>
+    </label>
     <button id="clearBtn">Clear</button>
   </div>
 
