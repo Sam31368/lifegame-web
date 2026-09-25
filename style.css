@@ -73,13 +73,14 @@ button:active {
   align-items: center;
   gap: 6px;
   font-size: 0.9rem;
-  width: min(420px, 100%);
+  width: min(260px, 100%);
   justify-content: center;
 }
 
 #speedSlider {
   flex: 1;
   min-width: 0;
+  max-width: 160px;
 }
 
 #genCounter {
