@@ -157,10 +157,15 @@
     const positions = [];
     const patternWidth = pattern[0].length;
     const patternHeight = pattern.length;
+    const minX = Math.floor(0.1 * SIZE);
+    const minY = Math.floor(0.1 * SIZE);
+    const maxX = Math.floor(0.9 * SIZE - patternWidth);
+    const maxY = Math.floor(0.9 * SIZE - patternHeight);
 
     while (positions.length < 3) {
-      const x = Math.floor(Math.random() * (SIZE - patternWidth + 1));
-      const y = Math.floor(Math.random() * (SIZE - patternHeight + 1));
+      const x = minX + Math.floor(Math.random() * (maxX - minX + 1));
+      const y = minY + Math.floor(Math.random() * (maxY - minY + 1));
+
       const overlaps = positions.some((position) => (
         x < position.x + patternWidth &&
         x + patternWidth > position.x &&
